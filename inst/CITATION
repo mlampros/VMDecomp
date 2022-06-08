@@ -1,0 +1,36 @@
+citHeader("Please cite both the package and the original articles / software in your publications:")
+
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(
+  bibtype = "Manual",
+  title   = "{VMDecomp}: Variational Mode Decomposition using R",
+  author  = person("Lampros", "Mouselimis"),
+  year    = year,
+  note    = note,
+  url     = "https://CRAN.R-project.org/package=VMDecomp"
+)
+
+bibentry(
+  bibtype  = "Article",
+  author   = c(as.person("Konstantin Dragomiretskiy"), as.person("Dominique Zosso")),
+  journal  = "IEEE Transactions on Signal Processing",
+  title    = "Variational Mode Decomposition",
+  year     = "2014",
+  volume   = "62",
+  number   = "3",
+  pages    = "531--544",
+  doi      = "10.1109/TSP.2013.2288675"
+)
+
+bibentry(
+  bibtype   = "InProceedings",
+  author    = c(as.person("Konstantin Dragomiretskiy"), as.person("Dominique Zosso")),
+  editor    = c(as.person("Xue-Cheng Tai"), as.person("Egil Bae"), as.person("Tony F. Chan"), as.person("Marius Lysaker")),
+  title     = "Two-Dimensional Variational Mode Decomposition",
+  booktitle = "Energy Minimization Methods in Computer Vision and Pattern Recognition",
+  year      = "2015",
+  publisher = "Springer International Publishing",
+  pages     = "197--208"
+)
