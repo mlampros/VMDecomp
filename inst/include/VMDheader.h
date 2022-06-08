@@ -249,7 +249,7 @@ namespace vmdR {
                         arma::uword init,
                         double tol,
                         bool verbose = false) {
-        
+
         bool flag_isfinite = signal.is_finite();
         if (!flag_isfinite) {
           Rcpp::stop("The input data includes missing values! You have to replace these missing values before using the 1-dimensional Variational Mode Decomposition function!");
@@ -338,7 +338,7 @@ namespace vmdR {
         }
 
         // Main loop for iterative updates
-        while (uDiff > tol && n < N - 1) {                 // not converged and below iterations limit
+        while ((uDiff > tol) && (n < N - 1)) {                 // not converged and below iterations limit
 
           // update first mode accumulator
           int k = 0;
@@ -473,7 +473,7 @@ namespace vmdR {
                         arma::uword init,
                         double tol,
                         bool verbose = false) {
-        
+
         bool flag_isfinite = signal.is_finite();
         if (!flag_isfinite) {
           Rcpp::stop("The input data includes missing values! You have to replace these missing values before using the 2-dimensional Variational Mode Decomposition function!");
@@ -512,7 +512,7 @@ namespace vmdR {
         arma::cx_mat mu_hat = arma::zeros<arma::cx_mat>(Hy, Hx);
 
         // N iterations at most, 2 spatial coordinates, K clusters
-        if (K < 1 & DC) {
+        if ((K < 1) & DC) {
           Rcpp::stop("The 'K' parameter must be greater than 1 if the 'DC' parameter is TRUE!");
         }
 
@@ -538,7 +538,7 @@ namespace vmdR {
         arma::uword n = 0;
 
         // run until convergence or max number of iterations
-        while ((uDiff > tol || omegaDiff > tol) && n < N - 1) {
+        while ((uDiff > tol || omegaDiff > tol) && (n < N - 1)) {
 
           // first things first
           int k = 0;
