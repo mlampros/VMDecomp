@@ -70,24 +70,41 @@
     <h2>Arguments</h2>
     <dl><dt>data</dt>
 <dd><p>either a vector or a matrix (of type numeric or integer)</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>a numeric value specifying the balancing parameter of the data-fidelity constraint</p></dd>
+
+
 <dt>tau</dt>
 <dd><p>a numeric value specifying the time-step of the dual ascent ( pick 0 for noise-slack )</p></dd>
+
+
 <dt>K</dt>
 <dd><p>a numeric value specifying the number of modes to be recovered</p></dd>
+
+
 <dt>DC</dt>
 <dd><p>a boolean. If true the first mode is put and kept at DC (0-freq)</p></dd>
+
+
 <dt>init</dt>
 <dd><p>a numeric value. This parameter differs depending on the input 'data' parameter (1-dimensional and 2-dimensional). See the details section for more information</p></dd>
+
+
 <dt>tol</dt>
 <dd><p>a numeric value specifying the tolerance of convergence criterion (typically this parameter is around 1e-6 for the 1-dimensional and 1e-7 for the 2-dimensional data)</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>a boolean. If TRUE then information will be printed in the console</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a list object of length three which includes the</p><ul><li><p>'u' (collection of decomposed modes)</p></li>
+    
+
+<p>a list object of length three which includes the</p><ul><li><p>'u' (collection of decomposed modes)</p></li>
 <li><p>'u_hat' (spectra of the modes)</p></li>
 <li><p>'omega' (estimated mode center-frequencies)
 objects</p></li>
@@ -182,7 +199,7 @@ objects</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
