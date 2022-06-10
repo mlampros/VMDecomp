@@ -102,6 +102,13 @@ to access the Rstudio console in order to give your username and password.
 
 <br>
 
+### **Similar Projects:**
+
+* https://github.com/vrcarva/vmdpy   (*Variational Mode Decomposition in Python*)
+* https://github.com/helske/Rlibeemd  (*ensemble empirical mode decomposition (EEMD) and its complete variant (CEEMDAN)*) 
+
+<br>
+
 ### **Citation:**
 
 If you use the **VMDecomp** R package in your paper or research please cite both **VMDecomp** and the **original articles / software** `https://CRAN.R-project.org/package=VMDecomp`:
