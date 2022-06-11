@@ -12,7 +12,7 @@
 
 <br>
 
-The **VMDecomp** R package is the *RcppArmadillo* implementation of the ["Variational Mode Decomposition" Matlab code](https://math.montana.edu/dzosso/code/) in R. More details on the functionality of VMDecomp can be found in the package [Documentation](https://mlampros.github.io/VMDecomp/reference/index.html) and [Vignette](https://mlampros.github.io/VMDecomp/articles/variatonal_mode_decomposition.html).
+The **VMDecomp** R package is the *RcppArmadillo* implementation of the ["Variational Mode Decomposition" Matlab code](https://math.montana.edu/dzosso/code/) in R. More details on the functionality of VMDecomp can be found in the package [Documentation](https://mlampros.github.io/VMDecomp/reference/index.html), [Vignette](https://mlampros.github.io/VMDecomp/articles/variatonal_mode_decomposition.html) and [blog post](http://mlampros.github.io/2022/06/11/variatonal_mode_decomposition/).
 
 <br>
 
