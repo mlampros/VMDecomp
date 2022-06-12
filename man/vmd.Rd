@@ -59,7 +59,7 @@ require(VMDecomp)
 # 1-dimensional
 #..............
 
-N = 500
+N = 250
 
 set.seed(1)
 rand_unif = runif(n = N, min = 0, max = 1.0)
