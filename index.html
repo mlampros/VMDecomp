@@ -86,15 +86,63 @@
 <p>The <strong>VMDecomp</strong> R package is the <em>RcppArmadillo</em> implementation of the <a href="https://math.montana.edu/dzosso/code/" class="external-link">“Variational Mode Decomposition” Matlab code</a> in R. More details on the functionality of VMDecomp can be found in the package <a href="https://mlampros.github.io/VMDecomp/reference/index.html" class="external-link">Documentation</a>, <a href="https://mlampros.github.io/VMDecomp/articles/variatonal_mode_decomposition.html" class="external-link">Vignette</a> and <a href="http://mlampros.github.io/2022/06/11/variatonal_mode_decomposition/" class="external-link">blog post</a>.</p>
 <p><br></p>
 <div class="section level3">
+<h3 id="example">Example:<a class="anchor" aria-label="anchor" href="#example"></a>
+</h3>
+<p><br></p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mlampros/VMDecomp" class="external-link">VMDecomp</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">arrhythmia</span><span class="op">)</span>
+
+<span class="va">alpha</span> <span class="op">=</span> <span class="fl">2000</span>       <span class="co"># moderate bandwidth constraint</span>
+<span class="va">tau</span> <span class="op">=</span> <span class="fl">0</span>            <span class="co"># noise-tolerance (no strict fidelity enforcement)</span>
+<span class="va">K</span> <span class="op">=</span> <span class="fl">9</span>              <span class="co"># 9 modes</span>
+<span class="va">DC</span> <span class="op">=</span> <span class="cn">FALSE</span>         <span class="co"># no DC part imposed</span>
+<span class="va">init</span> <span class="op">=</span> <span class="fl">1</span>           <span class="co"># initialize omegas uniformly</span>
+<span class="va">tol</span> <span class="op">=</span> <span class="fl">1e-6</span>
+
+<span class="va">vec_arrhythmia</span> <span class="op">=</span> <span class="va">arrhythmia</span><span class="op">[[</span><span class="st">'MLII'</span><span class="op">]</span><span class="op">]</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<span class="va">arr_vmd</span> <span class="op">=</span> <span class="fu"><a href="reference/vmd.html">vmd</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec_arrhythmia</span>, 
+              alpha <span class="op">=</span> <span class="va">alpha</span>,
+              tau <span class="op">=</span> <span class="va">tau</span>, 
+              K <span class="op">=</span> <span class="va">K</span>, 
+              DC <span class="op">=</span> <span class="va">DC</span>,
+              init <span class="op">=</span> <span class="va">init</span>, 
+              tol <span class="op">=</span> <span class="va">tol</span>,
+              verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+              
+<span class="va">imfs</span> <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu">data.table</span><span class="op">(</span><span class="va">arr_vmd</span><span class="op">$</span><span class="va">u</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">imfs</span><span class="op">)</span> <span class="op">=</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"IMF_{1:ncol(imfs)}"</span><span class="op">)</span>
+<span class="va">imfs</span><span class="op">$</span><span class="va">residual</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">imfs</span><span class="op">)</span> <span class="op">-</span> <span class="va">vec_arrhythmia</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">imfs</span>, digits <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+
+<span class="co">#           IMF_1    IMF_2    IMF_3   IMF_4   IMF_5    IMF_6    IMF_7    IMF_8    IMF_9 residual</span>
+<span class="co">#     1: -0.06947  0.07831  0.13355 0.14031 0.10371  0.05622 -0.00143 -0.09686 -0.00629 -0.01194</span>
+<span class="co">#     2: -0.06971  0.07765  0.13199 0.13698 0.09920  0.05226 -0.00062 -0.07683 -0.01055 -0.00963</span>
+<span class="co">#     3: -0.07016  0.07639  0.12896 0.13047 0.09046  0.04475  0.00097 -0.04075 -0.01487 -0.00377</span>
+<span class="co">#     4: -0.07068  0.07468  0.12466 0.12114 0.07810  0.03447  0.00329  0.00427 -0.01331  0.00662</span>
+<span class="co">#     5: -0.07108  0.07273  0.11937 0.10947 0.06297  0.02246  0.00622  0.04929 -0.00211  0.01932</span>
+<span class="co">#    ---                                                                                        </span>
+<span class="co">#  9996: -0.07001 -0.13154 -0.24738 0.18826 0.03381 -0.07354  0.00076  0.03773  0.01426  0.01234</span>
+<span class="co">#  9997: -0.06980 -0.13333 -0.25498 0.21256 0.03400 -0.11214  0.05833 -0.00481  0.01450  0.00432</span>
+<span class="co">#  9998: -0.06951 -0.13452 -0.26056 0.23154 0.03414 -0.14316  0.10925 -0.04580  0.00791 -0.00570</span>
+<span class="co">#  9999: -0.06934 -0.13534 -0.26432 0.24447 0.03413 -0.16496  0.14706 -0.07813 -0.00137 -0.00780</span>
+<span class="co"># 10000: -0.06932 -0.13581 -0.26626 0.25095 0.03402 -0.17629  0.16708 -0.09601 -0.00797  0.00040</span></code></pre></div>
+<p><br></p>
+</div>
+<div class="section level3">
 <h3 id="installation">Installation:<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <p><br></p>
 <p>To install the package from CRAN use,</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"VMDecomp"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <p>and to download the latest version of the package from Github,</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'mlampros/VMDecomp'</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <div class="section level4">
@@ -104,16 +152,16 @@
 <p><br></p>
 <p><strong>Docker images</strong> of the <em>VMDecomp</em> package are available to download from my <a href="https://hub.docker.com/r/mlampros/vmdecomp" class="external-link">dockerhub</a> account. The images come with <em>Rstudio</em> and the <em>R-development</em> version (latest) installed. The whole process was tested on Ubuntu 18.04. To <strong>pull</strong> &amp; <strong>run</strong> the image do the following,</p>
 <p><br></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2"></a>docker pull mlampros<span class="op">/</span>vmdecomp<span class="op">:</span>rstudiodev</span>
-<span id="cb3-3"><a href="#cb3-3"></a></span>
-<span id="cb3-4"><a href="#cb3-4"></a>docker run <span class="op">-</span>d <span class="op">--</span>name rstudio_dev <span class="op">-</span>e USER=rstudio <span class="op">-</span>e PASSWORD=give_here_your_password <span class="op">--</span>rm <span class="op">-</span>p <span class="dv">8787</span><span class="op">:</span><span class="dv">8787</span> mlampros<span class="op">/</span>vmdecomp<span class="op">:</span>rstudiodev</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2"></a>docker pull mlampros<span class="op">/</span>vmdecomp<span class="op">:</span>rstudiodev</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>docker run <span class="op">-</span>d <span class="op">--</span>name rstudio_dev <span class="op">-</span>e USER=rstudio <span class="op">-</span>e PASSWORD=give_here_your_password <span class="op">--</span>rm <span class="op">-</span>p <span class="dv">8787</span><span class="op">:</span><span class="dv">8787</span> mlampros<span class="op">/</span>vmdecomp<span class="op">:</span>rstudiodev</span></code></pre></div>
 <p><br></p>
 <p>The user can also <strong>bind</strong> a home directory / folder to the image to use its files by specifying the <strong>-v</strong> command,</p>
 <p><br></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a></span>
-<span id="cb4-2"><a href="#cb4-2"></a>docker run <span class="op">-</span>d <span class="op">--</span>name rstudio_dev <span class="op">-</span>e USER=rstudio <span class="op">-</span>e PASSWORD=give_here_your_password <span class="op">--</span>rm <span class="op">-</span>p <span class="dv">8787</span><span class="op">:</span><span class="dv">8787</span> <span class="op">-</span>v <span class="op">/</span>home<span class="op">/</span>YOUR_DIR<span class="op">:</span><span class="er">/</span>home<span class="op">/</span>rstudio<span class="op">/</span>YOUR_DIR mlampros<span class="op">/</span>vmdecomp<span class="op">:</span>rstudiodev</span>
-<span id="cb4-3"><a href="#cb4-3"></a></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2"></a>docker run <span class="op">-</span>d <span class="op">--</span>name rstudio_dev <span class="op">-</span>e USER=rstudio <span class="op">-</span>e PASSWORD=give_here_your_password <span class="op">--</span>rm <span class="op">-</span>p <span class="dv">8787</span><span class="op">:</span><span class="dv">8787</span> <span class="op">-</span>v <span class="op">/</span>home<span class="op">/</span>YOUR_DIR<span class="op">:</span><span class="er">/</span>home<span class="op">/</span>rstudio<span class="op">/</span>YOUR_DIR mlampros<span class="op">/</span>vmdecomp<span class="op">:</span>rstudiodev</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span></code></pre></div>
 <p><br></p>
 <p>The <strong>USER</strong> defaults to <em>rstudio</em> but you have to give your <strong>PASSWORD</strong> of preference (see <a href="https://www.rocker-project.org/" class="external-link">www.rocker-project.org</a> for more information).</p>
 <p><br></p>
@@ -121,11 +169,11 @@
 <p><br></p>
 <p><strong>1st. Option</strong> on your personal computer,</p>
 <p><br></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>http<span class="op">:</span><span class="er">//</span><span class="dv">0</span>.<span class="dv">0</span>.<span class="fl">0.0</span><span class="op">:</span><span class="dv">8787</span> </span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>http<span class="op">:</span><span class="er">//</span><span class="dv">0</span>.<span class="dv">0</span>.<span class="fl">0.0</span><span class="op">:</span><span class="dv">8787</span> </span></code></pre></div>
 <p><br></p>
 <p><strong>2nd. Option</strong> on a cloud instance,</p>
 <p><br></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>http<span class="op">:</span><span class="er">//</span>Public DNS<span class="op">:</span><span class="dv">8787</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>http<span class="op">:</span><span class="er">//</span>Public DNS<span class="op">:</span><span class="dv">8787</span></span></code></pre></div>
 <p><br></p>
 <p>to access the Rstudio console in order to give your username and password.</p>
 <p><br></p>
@@ -149,13 +197,13 @@
 </h3>
 <p>If you use the <strong>VMDecomp</strong> R package in your paper or research please cite both <strong>VMDecomp</strong> and the <strong>original articles / software</strong> <code>https://CRAN.R-project.org/package=VMDecomp</code>:</p>
 <p><br></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="op">@</span>Manual{,</span>
-<span id="cb7-2"><a href="#cb7-2"></a>  title =<span class="st"> </span>{{VMDecomp}<span class="op">:</span><span class="st"> </span>Variational Mode Decomposition using R},</span>
-<span id="cb7-3"><a href="#cb7-3"></a>  author =<span class="st"> </span>{Lampros Mouselimis},</span>
-<span id="cb7-4"><a href="#cb7-4"></a>  year =<span class="st"> </span>{<span class="dv">2022</span>},</span>
-<span id="cb7-5"><a href="#cb7-5"></a>  note =<span class="st"> </span>{R package version <span class="dv">1</span>.<span class="fl">0.0</span>},</span>
-<span id="cb7-6"><a href="#cb7-6"></a>  url =<span class="st"> </span>{https<span class="op">:</span><span class="er">//</span>CRAN.R<span class="op">-</span>project.org<span class="op">/</span>package=VMDecomp},</span>
-<span id="cb7-7"><a href="#cb7-7"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="op">@</span>Manual{,</span>
+<span id="cb8-2"><a href="#cb8-2"></a>  title =<span class="st"> </span>{{VMDecomp}<span class="op">:</span><span class="st"> </span>Variational Mode Decomposition using R},</span>
+<span id="cb8-3"><a href="#cb8-3"></a>  author =<span class="st"> </span>{Lampros Mouselimis},</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  year =<span class="st"> </span>{<span class="dv">2022</span>},</span>
+<span id="cb8-5"><a href="#cb8-5"></a>  note =<span class="st"> </span>{R package version <span class="dv">1</span>.<span class="fl">0.0</span>},</span>
+<span id="cb8-6"><a href="#cb8-6"></a>  url =<span class="st"> </span>{https<span class="op">:</span><span class="er">//</span>CRAN.R<span class="op">-</span>project.org<span class="op">/</span>package=VMDecomp},</span>
+<span id="cb8-7"><a href="#cb8-7"></a>}</span></code></pre></div>
 <p><br></p>
 </div>
 </div>
