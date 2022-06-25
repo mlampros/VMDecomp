@@ -105,84 +105,84 @@
 </h3>
 <p>In the Authors’ paper “Variational Mode Decomposition” (page 13 / 16) is mentioned, <em>“A ‘clean’ electrocardiogram (ECG) signal can be reconstructed by summing all but the first and last VMD modes, thus discarding the low-frequency baseline oscillation and most of the high-frequency noise.”</em> I’ll use the <em>‘arrhythmia’</em> data (especially the first column which corresponds to the <em>modified limb lead II (MLII)</em>) for this purpose. This same example appears also online (<a href="https://www.mathworks.com/help/wavelet/ref/vmd.html" class="external-link">Matlab Mathworks</a>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mlampros/VMDecomp" class="external-link">VMDecomp</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidyverse/glue" class="external-link">glue</a></span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">arrhythmia</span><span class="op">)</span>
-
-<span class="va">alpha</span> <span class="op">=</span> <span class="fl">2000</span>       <span class="co"># moderate bandwidth constraint</span>
-<span class="va">tau</span> <span class="op">=</span> <span class="fl">0</span>            <span class="co"># noise-tolerance (no strict fidelity enforcement)</span>
-<span class="va">K</span> <span class="op">=</span> <span class="fl">9</span>              <span class="co"># 9 modes</span>
-<span class="va">DC</span> <span class="op">=</span> <span class="cn">FALSE</span>         <span class="co"># no DC part imposed</span>
-<span class="va">init</span> <span class="op">=</span> <span class="fl">1</span>           <span class="co"># initialize omegas uniformly</span>
-<span class="va">tol</span> <span class="op">=</span> <span class="fl">1e-6</span>
-
-<span class="va">vec_arrhythmia</span> <span class="op">=</span> <span class="va">arrhythmia</span><span class="op">[[</span><span class="st">'MLII'</span><span class="op">]</span><span class="op">]</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-<span class="va">arr_vmd</span> <span class="op">=</span> <span class="fu"><a href="../reference/vmd.html">vmd</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec_arrhythmia</span>, 
-              alpha <span class="op">=</span> <span class="va">alpha</span>,
-              tau <span class="op">=</span> <span class="va">tau</span>, 
-              K <span class="op">=</span> <span class="va">K</span>, 
-              DC <span class="op">=</span> <span class="va">DC</span>,
-              init <span class="op">=</span> <span class="va">init</span>, 
-              tol <span class="op">=</span> <span class="va">tol</span>,
-              verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co"># 1-dimensional VMD starts ...</span>
-<span class="co"># --------------------------------</span>
-<span class="co"># The 1-dimensional VMD starts ...</span>
-<span class="co"># --------------------------------</span>
-<span class="co"># Iteration: 10   uDiff: 2.28024</span>
-<span class="co"># Iteration: 20   uDiff: 1.05777</span>
-<span class="co"># Iteration: 30   uDiff: 0.515047</span>
-<span class="co"># Iteration: 40   uDiff: 0.346114</span>
-<span class="co"># Iteration: 50   uDiff: 0.277273</span>
-<span class="co"># Iteration: 60   uDiff: 0.240478</span>
-<span class="co"># Iteration: 70   uDiff: 0.212126</span>
-<span class="co"># Iteration: 80   uDiff: 0.20821</span>
-<span class="co"># Iteration: 90   uDiff: 0.196179</span>
-<span class="co"># ...............</span>
-<span class="co"># Iteration: 470   uDiff: 0.00728391</span>
-<span class="co"># Iteration: 480   uDiff: 0.00698528</span>
-<span class="co"># Iteration: 490   uDiff: 0.00663912</span>
-<span class="co"># Iteration: 500   uDiff: 0.00629761</span>
-<span class="co"># -----------------------------------------</span>
-<span class="co"># The algorithm converged in iteration: 500</span>
-<span class="co"># -----------------------------------------</span>
-<span class="co"># Elapsed time: 0 hours and 0 minutes and 19 seconds. </span>
-
-
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">arr_vmd</span><span class="op">)</span>
-<span class="co"># List of 3</span>
-<span class="co">#  $ u    : num [1:10000, 1:9] -0.0695 -0.0697 -0.0702 -0.0707 -0.0711 ...</span>
-<span class="co">#  $ u_hat: cplx [1:10000, 1:9] 6.54e-04+0.0i -3.83e-03+5.1e-04i -1.99e-03+8.5e-04i ...</span>
-<span class="co">#  $ omega: num [1:500, 1:9] 0 0.00561 0.00595 0.00596 0.00586 ...</span>
-
-
-<span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="va">K</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>
-
-<span class="kw">for</span> <span class="op">(</span><span class="va">item</span> <span class="kw">in</span> <span class="va">K</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">item_mode</span> <span class="op">=</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"IMF {K-item+1}"</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">arr_vmd</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>, <span class="va">item</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">'l'</span>, main <span class="op">=</span> <span class="va">item_mode</span>, xlab <span class="op">=</span> <span class="st">'Time'</span>, ylab <span class="op">=</span> <span class="st">''</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mlampros/VMDecomp" class="external-link">VMDecomp</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidyverse/glue" class="external-link">glue</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">arrhythmia</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">alpha</span> <span class="op">=</span> <span class="fl">2000</span>       <span class="co"># moderate bandwidth constraint</span></span>
+<span><span class="va">tau</span> <span class="op">=</span> <span class="fl">0</span>            <span class="co"># noise-tolerance (no strict fidelity enforcement)</span></span>
+<span><span class="va">K</span> <span class="op">=</span> <span class="fl">9</span>              <span class="co"># 9 modes</span></span>
+<span><span class="va">DC</span> <span class="op">=</span> <span class="cn">FALSE</span>         <span class="co"># no DC part imposed</span></span>
+<span><span class="va">init</span> <span class="op">=</span> <span class="fl">1</span>           <span class="co"># initialize omegas uniformly</span></span>
+<span><span class="va">tol</span> <span class="op">=</span> <span class="fl">1e-6</span></span>
+<span></span>
+<span><span class="va">vec_arrhythmia</span> <span class="op">=</span> <span class="va">arrhythmia</span><span class="op">[[</span><span class="st">'MLII'</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">arr_vmd</span> <span class="op">=</span> <span class="fu"><a href="../reference/vmd.html">vmd</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">vec_arrhythmia</span>, </span>
+<span>              alpha <span class="op">=</span> <span class="va">alpha</span>,</span>
+<span>              tau <span class="op">=</span> <span class="va">tau</span>, </span>
+<span>              K <span class="op">=</span> <span class="va">K</span>, </span>
+<span>              DC <span class="op">=</span> <span class="va">DC</span>,</span>
+<span>              init <span class="op">=</span> <span class="va">init</span>, </span>
+<span>              tol <span class="op">=</span> <span class="va">tol</span>,</span>
+<span>              verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1-dimensional VMD starts ...</span></span>
+<span><span class="co"># --------------------------------</span></span>
+<span><span class="co"># The 1-dimensional VMD starts ...</span></span>
+<span><span class="co"># --------------------------------</span></span>
+<span><span class="co"># Iteration: 10   uDiff: 2.28024</span></span>
+<span><span class="co"># Iteration: 20   uDiff: 1.05777</span></span>
+<span><span class="co"># Iteration: 30   uDiff: 0.515047</span></span>
+<span><span class="co"># Iteration: 40   uDiff: 0.346114</span></span>
+<span><span class="co"># Iteration: 50   uDiff: 0.277273</span></span>
+<span><span class="co"># Iteration: 60   uDiff: 0.240478</span></span>
+<span><span class="co"># Iteration: 70   uDiff: 0.212126</span></span>
+<span><span class="co"># Iteration: 80   uDiff: 0.20821</span></span>
+<span><span class="co"># Iteration: 90   uDiff: 0.196179</span></span>
+<span><span class="co"># ...............</span></span>
+<span><span class="co"># Iteration: 470   uDiff: 0.00728391</span></span>
+<span><span class="co"># Iteration: 480   uDiff: 0.00698528</span></span>
+<span><span class="co"># Iteration: 490   uDiff: 0.00663912</span></span>
+<span><span class="co"># Iteration: 500   uDiff: 0.00629761</span></span>
+<span><span class="co"># -----------------------------------------</span></span>
+<span><span class="co"># The algorithm converged in iteration: 500</span></span>
+<span><span class="co"># -----------------------------------------</span></span>
+<span><span class="co"># Elapsed time: 0 hours and 0 minutes and 19 seconds. </span></span>
+<span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">arr_vmd</span><span class="op">)</span></span>
+<span><span class="co"># List of 3</span></span>
+<span><span class="co">#  $ u    : num [1:10000, 1:9] -0.0695 -0.0697 -0.0702 -0.0707 -0.0711 ...</span></span>
+<span><span class="co">#  $ u_hat: cplx [1:10000, 1:9] 6.54e-04+0.0i -3.83e-03+5.1e-04i -1.99e-03+8.5e-04i ...</span></span>
+<span><span class="co">#  $ omega: num [1:500, 1:9] 0 0.00561 0.00595 0.00596 0.00586 ...</span></span>
+<span></span>
+<span></span>
+<span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="va">K</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">item</span> <span class="kw">in</span> <span class="va">K</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">item_mode</span> <span class="op">=</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"IMF {K-item+1}"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">arr_vmd</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>, <span class="va">item</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">'l'</span>, main <span class="op">=</span> <span class="va">item_mode</span>, xlab <span class="op">=</span> <span class="st">'Time'</span>, ylab <span class="op">=</span> <span class="st">''</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p><img src="Imf_multiplot.jpeg"></p>
 <p><br></p>
 <p>The previous plot shows the intrinsic mode functions (IMF’s). Based on the Authors’ statement if we exclude the first and last Modes (IMF’s) we’ll receive a noise-free ECG,</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="va">imfs_noise_free</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">arr_vmd</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">K</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-
-<span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">vec_arrhythmia</span>, type <span class="op">=</span> <span class="st">'l'</span>, col <span class="op">=</span> <span class="st">"blue"</span>, xlab <span class="op">=</span> <span class="st">'Time'</span>, ylab <span class="op">=</span> <span class="st">'Signal'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">imfs_noise_free</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, 
-       legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Original ECG"</span>, <span class="st">"Clean ECG"</span><span class="op">)</span>,
-       col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"orange"</span><span class="op">)</span>, 
-       lty <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, 
-       cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="va">imfs_noise_free</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">arr_vmd</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">K</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">vec_arrhythmia</span>, type <span class="op">=</span> <span class="st">'l'</span>, col <span class="op">=</span> <span class="st">"blue"</span>, xlab <span class="op">=</span> <span class="st">'Time'</span>, ylab <span class="op">=</span> <span class="st">'Signal'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">imfs_noise_free</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, </span>
+<span>       legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Original ECG"</span>, <span class="st">"Clean ECG"</span><span class="op">)</span>,</span>
+<span>       col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"orange"</span><span class="op">)</span>, </span>
+<span>       lty <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, </span>
+<span>       cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
 <p><img src="noise_free_ECG.jpeg"></p>
 </div>
 <div class="section level3">
@@ -191,86 +191,86 @@
 <p>To explain the functionality of the <em>“vmd()”</em> R function for 2-dimensional data I’ll load the synthetic image used in section 3.1 of the Authors’ second paper where it’s mentioned,</p>
 <p><em>“The synthetic image is a composition of spatially overlapping basic shapes, more precisely six ellipses and a rectangle, with frequency patterns varying in both periodicity and direction… The spectrum is ideal for segmentation due to modes being deliberately both well isolated and narrow-banded. The resolution of the synthetic image is 256 x 256 and the experiment was run with parameters Alpha = 1000 and K = 5. This experiment converged in 520 iterations which took 45 seconds on a standard PC. The algorithm has no problems in accuracy nor timeliness in segmenting the image into its five constituent sub-images. The first is the DC component of the image - a solid ellipse and rectangle, while the four remaining decompositions show clear separation of the patterned ellipses. Due to the solid pieces having sharp edges, their spectra are not band limited, and only smoothed versions are recovered.”</em></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HenrikBengtsson/R.matlab" class="external-link">R.matlab</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mlampros/OpenImageR" class="external-link">OpenImageR</a></span><span class="op">)</span>
-
-<span class="va">pth_texture</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'Matlab'</span>, <span class="st">'VMD_2D'</span>, <span class="st">'texture.mat'</span>, package <span class="op">=</span> <span class="st">'VMDecomp'</span><span class="op">)</span>
-<span class="va">data</span> <span class="op">=</span> <span class="fu">R.matlab</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">readMat</a></span><span class="op">(</span><span class="va">pth_texture</span><span class="op">)</span>
-<span class="va">data</span> <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">f</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
-<span class="co"># [1] 256 256</span>
-
-<span class="va">alpha</span> <span class="op">=</span> <span class="fl">1000</span>       <span class="co"># bandwidth constraint</span>
-<span class="va">tau</span> <span class="op">=</span> <span class="fl">0.25</span>         <span class="co"># Lagrangian multipliers dual ascent time step</span>
-<span class="va">K</span> <span class="op">=</span> <span class="fl">5</span>              <span class="co"># number of modes</span>
-<span class="va">DC</span> <span class="op">=</span> <span class="cn">TRUE</span>          <span class="co"># includes DC part (first mode at DC)</span>
-<span class="va">init</span> <span class="op">=</span> <span class="fl">1</span>           <span class="co"># initialize omegas randomly, may need multiple runs!</span>
-<span class="va">tol</span> <span class="op">=</span> <span class="fl">1e-7</span>         <span class="co"># tolerance (for convergence)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
-<span class="va">res_2d</span> <span class="op">=</span> <span class="fu"><a href="../reference/vmd.html">vmd</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>,
-             alpha <span class="op">=</span> <span class="va">alpha</span>,
-             tau <span class="op">=</span> <span class="va">tau</span>,
-             K <span class="op">=</span> <span class="va">K</span>,
-             DC <span class="op">=</span> <span class="va">DC</span>,
-             init <span class="op">=</span> <span class="va">init</span>,
-             tol <span class="op">=</span> <span class="va">tol</span>,
-             verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co"># --------------------------------</span>
-<span class="co"># The 2-dimensional VMD starts ...</span>
-<span class="co"># --------------------------------</span>
-<span class="co"># Iteration: 10  uDiff: 42.7451  omegaDiff: 0.00012395</span>
-<span class="co"># Iteration: 20  uDiff: 1.05264  omegaDiff: 1.15039e-09</span>
-<span class="co"># Iteration: 30  uDiff: 0.31892  omegaDiff: 4.14469e-10</span>
-<span class="co"># Iteration: 40  uDiff: 0.117648  omegaDiff: 1.45234e-10</span>
-<span class="co"># Iteration: 50  uDiff: 0.0491776  omegaDiff: 6.399e-11</span>
-<span class="co"># Iteration: 60  uDiff: 0.0222704  omegaDiff: 3.33701e-11</span>
-<span class="co"># Iteration: 70  uDiff: 0.0106591  omegaDiff: 1.87647e-11</span>
-<span class="co"># Iteration: 80  uDiff: 0.0053165  omegaDiff: 1.08343e-11</span>
-<span class="co"># Iteration: 90  uDiff: 0.00273909  omegaDiff: 6.30121e-12</span>
-<span class="co"># ............</span>
-<span class="co"># Iteration: 250  uDiff: 6.31694e-07  omegaDiff: 1.22605e-15</span>
-<span class="co"># Iteration: 260  uDiff: 4.33964e-07  omegaDiff: 8.05652e-16</span>
-<span class="co"># Iteration: 270  uDiff: 3.08055e-07  omegaDiff: 5.66624e-16</span>
-<span class="co"># Iteration: 280  uDiff: 2.26559e-07  omegaDiff: 4.31241e-16</span>
-<span class="co"># Iteration: 290  uDiff: 1.728e-07  omegaDiff: 3.54727e-16</span>
-<span class="co"># Iteration: 300  uDiff: 1.36554e-07  omegaDiff: 3.11406e-16</span>
-<span class="co"># Iteration: 310  uDiff: 1.11508e-07  omegaDiff: 2.86634e-16</span>
-<span class="co"># -----------------------------------------</span>
-<span class="co"># The algorithm converged in iteration: 317</span>
-<span class="co"># -----------------------------------------</span>
-<span class="co"># Elapsed time: 0 hours and 0 minutes and 41 seconds.</span>
-
-<span class="va">end_dims</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">res_2d</span><span class="op">$</span><span class="va">u</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">res_2d</span><span class="op">)</span>
-<span class="co"># List of 3</span>
-<span class="co">#  $ u    : num [1:256, 1:256, 1:5] 3.16e-05 1.80e-05 -3.32e-06 -3.17e-05 -6.32e-05 ...</span>
-<span class="co">#  $ u_hat: cplx [1:256, 1:256, 1:5] 7.65e-04+0.00i -6.63e-04-3.28e-04i 7.74e-04-3.15e-04i ...</span>
-<span class="co">#  $ omega: num [1:317, 1:2, 1:5] 0 0 0 0 0 0 0 0 0 0 ...</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HenrikBengtsson/R.matlab" class="external-link">R.matlab</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mlampros/OpenImageR" class="external-link">OpenImageR</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pth_texture</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'Matlab'</span>, <span class="st">'VMD_2D'</span>, <span class="st">'texture.mat'</span>, package <span class="op">=</span> <span class="st">'VMDecomp'</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">=</span> <span class="fu">R.matlab</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">readMat</a></span><span class="op">(</span><span class="va">pth_texture</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">f</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span><span class="co"># [1] 256 256</span></span>
+<span></span>
+<span><span class="va">alpha</span> <span class="op">=</span> <span class="fl">1000</span>       <span class="co"># bandwidth constraint</span></span>
+<span><span class="va">tau</span> <span class="op">=</span> <span class="fl">0.25</span>         <span class="co"># Lagrangian multipliers dual ascent time step</span></span>
+<span><span class="va">K</span> <span class="op">=</span> <span class="fl">5</span>              <span class="co"># number of modes</span></span>
+<span><span class="va">DC</span> <span class="op">=</span> <span class="cn">TRUE</span>          <span class="co"># includes DC part (first mode at DC)</span></span>
+<span><span class="va">init</span> <span class="op">=</span> <span class="fl">1</span>           <span class="co"># initialize omegas randomly, may need multiple runs!</span></span>
+<span><span class="va">tol</span> <span class="op">=</span> <span class="fl">1e-7</span>         <span class="co"># tolerance (for convergence)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">res_2d</span> <span class="op">=</span> <span class="fu"><a href="../reference/vmd.html">vmd</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>,</span>
+<span>             alpha <span class="op">=</span> <span class="va">alpha</span>,</span>
+<span>             tau <span class="op">=</span> <span class="va">tau</span>,</span>
+<span>             K <span class="op">=</span> <span class="va">K</span>,</span>
+<span>             DC <span class="op">=</span> <span class="va">DC</span>,</span>
+<span>             init <span class="op">=</span> <span class="va">init</span>,</span>
+<span>             tol <span class="op">=</span> <span class="va">tol</span>,</span>
+<span>             verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># --------------------------------</span></span>
+<span><span class="co"># The 2-dimensional VMD starts ...</span></span>
+<span><span class="co"># --------------------------------</span></span>
+<span><span class="co"># Iteration: 10  uDiff: 42.7451  omegaDiff: 0.00012395</span></span>
+<span><span class="co"># Iteration: 20  uDiff: 1.05264  omegaDiff: 1.15039e-09</span></span>
+<span><span class="co"># Iteration: 30  uDiff: 0.31892  omegaDiff: 4.14469e-10</span></span>
+<span><span class="co"># Iteration: 40  uDiff: 0.117648  omegaDiff: 1.45234e-10</span></span>
+<span><span class="co"># Iteration: 50  uDiff: 0.0491776  omegaDiff: 6.399e-11</span></span>
+<span><span class="co"># Iteration: 60  uDiff: 0.0222704  omegaDiff: 3.33701e-11</span></span>
+<span><span class="co"># Iteration: 70  uDiff: 0.0106591  omegaDiff: 1.87647e-11</span></span>
+<span><span class="co"># Iteration: 80  uDiff: 0.0053165  omegaDiff: 1.08343e-11</span></span>
+<span><span class="co"># Iteration: 90  uDiff: 0.00273909  omegaDiff: 6.30121e-12</span></span>
+<span><span class="co"># ............</span></span>
+<span><span class="co"># Iteration: 250  uDiff: 6.31694e-07  omegaDiff: 1.22605e-15</span></span>
+<span><span class="co"># Iteration: 260  uDiff: 4.33964e-07  omegaDiff: 8.05652e-16</span></span>
+<span><span class="co"># Iteration: 270  uDiff: 3.08055e-07  omegaDiff: 5.66624e-16</span></span>
+<span><span class="co"># Iteration: 280  uDiff: 2.26559e-07  omegaDiff: 4.31241e-16</span></span>
+<span><span class="co"># Iteration: 290  uDiff: 1.728e-07  omegaDiff: 3.54727e-16</span></span>
+<span><span class="co"># Iteration: 300  uDiff: 1.36554e-07  omegaDiff: 3.11406e-16</span></span>
+<span><span class="co"># Iteration: 310  uDiff: 1.11508e-07  omegaDiff: 2.86634e-16</span></span>
+<span><span class="co"># -----------------------------------------</span></span>
+<span><span class="co"># The algorithm converged in iteration: 317</span></span>
+<span><span class="co"># -----------------------------------------</span></span>
+<span><span class="co"># Elapsed time: 0 hours and 0 minutes and 41 seconds.</span></span>
+<span></span>
+<span><span class="va">end_dims</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">res_2d</span><span class="op">$</span><span class="va">u</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">res_2d</span><span class="op">)</span></span>
+<span><span class="co"># List of 3</span></span>
+<span><span class="co">#  $ u    : num [1:256, 1:256, 1:5] 3.16e-05 1.80e-05 -3.32e-06 -3.17e-05 -6.32e-05 ...</span></span>
+<span><span class="co">#  $ u_hat: cplx [1:256, 1:256, 1:5] 7.65e-04+0.00i -6.63e-04-3.28e-04i 7.74e-04-3.15e-04i ...</span></span>
+<span><span class="co">#  $ omega: num [1:317, 1:2, 1:5] 0 0 0 0 0 0 0 0 0 0 ...</span></span></code></pre></div>
 <p><br></p>
 <p>To the output IMF’s I’ll also include the input image and then I’ll visualize all images in a multi-plot to verify that each IMF represents a different shape of the input image,</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="va">res_2d_lst</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">end_dims</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">res_2d</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>,, <span class="va">x</span><span class="op">]</span><span class="op">)</span>
-<span class="va">res_2d_lst</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/append.html" class="external-link">append</a></span><span class="op">(</span><span class="va">res_2d_lst</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, after <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">res_2d_lst</span><span class="op">)</span>
-<span class="co"># List of 6</span>
-<span class="co">#  $ : num [1:256, 1:256] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#  $ : num [1:256, 1:256] 3.16e-05 1.80e-05 -3.32e-06 -3.17e-05 -6.32e-05 ...</span>
-<span class="co">#  $ : num [1:256, 1:256] -4.36e-05 -3.08e-05 -1.19e-05 2.28e-05 6.01e-05 ...</span>
-<span class="co">#  $ : num [1:256, 1:256] -2.67e-07 2.53e-06 1.03e-06 1.94e-06 2.44e-07 ...</span>
-<span class="co">#  $ : num [1:256, 1:256] 3.31e-06 1.21e-06 2.15e-06 1.66e-07 4.97e-07 ...</span>
-<span class="co">#  $ : num [1:256, 1:256] 6.72e-06 9.27e-06 1.14e-05 8.79e-06 1.45e-06 ...</span>
-
-
-<span class="va">init_plt</span> <span class="op">=</span> <span class="fu">OpenImageR</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/OpenImageR/man/GaborFeatureExtract.html" class="external-link">GaborFeatureExtract</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span>
-<span class="va">mlt_plt</span> <span class="op">=</span> <span class="va">init_plt</span><span class="op">$</span><span class="fu">plot_multi_images</span><span class="op">(</span>list_images <span class="op">=</span> <span class="va">res_2d_lst</span>, 
-                                     par_ROWS <span class="op">=</span> <span class="fl">3</span>, 
-                                     par_COLS <span class="op">=</span> <span class="fl">2</span>, 
-                                     axes <span class="op">=</span> <span class="cn">TRUE</span>,
-                                     titles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Input Image"</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"Imf_{1:end_dims}"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="va">res_2d_lst</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">end_dims</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">res_2d</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>,, <span class="va">x</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">res_2d_lst</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/append.html" class="external-link">append</a></span><span class="op">(</span><span class="va">res_2d_lst</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, after <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">res_2d_lst</span><span class="op">)</span></span>
+<span><span class="co"># List of 6</span></span>
+<span><span class="co">#  $ : num [1:256, 1:256] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#  $ : num [1:256, 1:256] 3.16e-05 1.80e-05 -3.32e-06 -3.17e-05 -6.32e-05 ...</span></span>
+<span><span class="co">#  $ : num [1:256, 1:256] -4.36e-05 -3.08e-05 -1.19e-05 2.28e-05 6.01e-05 ...</span></span>
+<span><span class="co">#  $ : num [1:256, 1:256] -2.67e-07 2.53e-06 1.03e-06 1.94e-06 2.44e-07 ...</span></span>
+<span><span class="co">#  $ : num [1:256, 1:256] 3.31e-06 1.21e-06 2.15e-06 1.66e-07 4.97e-07 ...</span></span>
+<span><span class="co">#  $ : num [1:256, 1:256] 6.72e-06 9.27e-06 1.14e-05 8.79e-06 1.45e-06 ...</span></span>
+<span></span>
+<span></span>
+<span><span class="va">init_plt</span> <span class="op">=</span> <span class="fu">OpenImageR</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/OpenImageR/man/GaborFeatureExtract.html" class="external-link">GaborFeatureExtract</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">mlt_plt</span> <span class="op">=</span> <span class="va">init_plt</span><span class="op">$</span><span class="fu">plot_multi_images</span><span class="op">(</span>list_images <span class="op">=</span> <span class="va">res_2d_lst</span>, </span>
+<span>                                     par_ROWS <span class="op">=</span> <span class="fl">3</span>, </span>
+<span>                                     par_COLS <span class="op">=</span> <span class="fl">2</span>, </span>
+<span>                                     axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                                     titles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Input Image"</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"Imf_{1:end_dims}"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="multiplot_2D.png"></p>
 </div>
 </div>
