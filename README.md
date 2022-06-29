@@ -171,7 +171,7 @@ If you use the **VMDecomp** R package in your paper or research please cite both
   title = {{VMDecomp}: Variational Mode Decomposition using R},
   author = {Lampros Mouselimis},
   year = {2022},
-  note = {R package version 1.0.0},
+  note = {R package version 1.0.1},
   url = {https://CRAN.R-project.org/package=VMDecomp},
 }
 ```

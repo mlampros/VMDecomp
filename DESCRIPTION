@@ -1,8 +1,8 @@
 Package: VMDecomp
 Type: Package
 Title: Variational Mode Decomposition
-Version: 1.0.0
-Date: 2022-06-12
+Version: 1.0.1
+Date: 2022-06-29
 Authors@R: c( person("Lampros", "Mouselimis", email = "mouselimislampros@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "https://orcid.org/0000-0002-8024-1546")), person("Dominique", "Zosso", email = "dominique.zosso@montana.edu", role = "cph", comment = "Author of the Variational Mode Decomposition Matlab code"), person("Konstantin", "Dragomiretskiy", role = "cph", comment = "Author of the Variational Mode Decomposition Matlab code") )
 Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
 BugReports: https://github.com/mlampros/VMDecomp/issues
@@ -15,14 +15,15 @@ SystemRequirements: libarmadillo: apt-get install -y libarmadillo-dev (deb), lib
 Depends:
     R(>= 3.5.0)
 Imports:
-    Rcpp (>= 1.0.8.3)
+    Rcpp (>= 1.0.8.3),
+    data.table,
+    glue
 LinkingTo: 
     Rcpp, 
     RcppArmadillo
 Suggests:
     OpenImageR,
     R.matlab,
-    glue,
     testthat (>= 3.0.0),
     rmarkdown,
     knitr
