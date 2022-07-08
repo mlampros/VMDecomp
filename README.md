@@ -16,7 +16,11 @@ The **VMDecomp** R package is the *RcppArmadillo* implementation of the ["Variat
 
 <br>
 
-### Example:
+### Examples:
+
+<br>
+
+**Variational Mode Decomposition** (including residuals)
 
 <br>
 
@@ -62,6 +66,46 @@ round(imfs, digits = 5)
 #  9998: -0.06951 -0.13452 -0.26056 0.23154 0.03414 -0.14316  0.10925 -0.04580  0.00791 -0.00570
 #  9999: -0.06934 -0.13534 -0.26432 0.24447 0.03413 -0.16496  0.14706 -0.07813 -0.00137 -0.00780
 # 10000: -0.06932 -0.13581 -0.26626 0.25095 0.03402 -0.17629  0.16708 -0.09601 -0.00797  0.00040
+
+```
+
+<br>
+
+**Estimation of the K-modes Parameter** (*correlation threshold* of 0.1 and a *minimum K* of 2)
+
+<br>
+
+```R
+
+require(VMDecomp)
+data(arrhythmia)
+
+default_vmd_params = list(alpha = 2000,
+                          tau = 0,
+                          DC = FALSE,
+                          init = 1,
+                          tol = 1e-6)
+
+res_k = estimate_k_modes(signal_1d = arrhythmia[['MLII']],
+                         cor_thresh = 0.1,
+                         default_vmd_params = default_vmd_params,
+                         min_K = 2,
+                         seed = 1,
+                         verbose = TRUE)
+                         
+# VMD based on a K of '2' will be computed ... 
+# VMD based on a K of '3' will be computed ... 
+# VMD based on a K of '4' will be computed ... 
+# VMD based on a K of '5' will be computed ... 
+# VMD based on a K of '6' will be computed ... 
+# VMD based on a K of '7' will be computed ... 
+# VMD based on a K of '8' will be computed ... 
+# VMD based on a K of '9' will be computed ... 
+# Optimal K parameter: '8'  Pre-specified correlation coefficient threshold: '0.1'
+# Elapsed time: 0 hours and 1 minutes and 19 seconds.
+
+res_k
+# [1] 8
 
 ```
 
