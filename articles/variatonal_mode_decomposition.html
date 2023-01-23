@@ -75,7 +75,7 @@
 
       
 
-      </header><script src="variatonal_mode_decomposition_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Variational Mode Decomposition (VMD)</h1>
@@ -88,22 +88,40 @@
 
     
     
-<p>The <strong>VMDecomp</strong> R package is an <em>RcppArmadillo</em> implementation of the Matlab Code for <em>Variational Mode Decomposition</em> (1- and 2-dimensional) based on the papers,</p>
+<p>The <strong>VMDecomp</strong> R package is an <em>RcppArmadillo</em>
+implementation of the Matlab Code for <em>Variational Mode
+Decomposition</em> (1- and 2-dimensional) based on the papers,</p>
 <ul>
-<li>“Variational Mode Decomposition” by K. Dragomiretskiy and D. Zosso in IEEE Transactions on Signal Processing, vol. 62, no. 3, pp. 531-544, Feb.1, 2014, <a href="https://doi.org/10.1109/TSP.2013.2288675" class="external-link uri">https://doi.org/10.1109/TSP.2013.2288675</a>
+<li>“Variational Mode Decomposition” by K. Dragomiretskiy and D. Zosso
+in IEEE Transactions on Signal Processing, vol. 62, no. 3, pp. 531-544,
+Feb.1, 2014, <a href="https://doi.org/10.1109/TSP.2013.2288675" class="external-link uri">https://doi.org/10.1109/TSP.2013.2288675</a>
 </li>
-<li>“Two-Dimensional Variational Mode Decomposition” by Dragomiretskiy, K., Zosso, D. (2015), In: Tai, XC., Bae, E., Chan, T.F., Lysaker, M. (eds) Energy Minimization Methods in Computer Vision and Pattern Recognition. EMMCVPR 2015. Lecture Notes in Computer Science, vol 8932. Springer, <a href="https://dx.doi.org/10.1007/978-3-319-14612-6_15" class="external-link uri">https://dx.doi.org/10.1007/978-3-319-14612-6_15</a>
+<li>“Two-Dimensional Variational Mode Decomposition” by Dragomiretskiy,
+K., Zosso, D. (2015), In: Tai, XC., Bae, E., Chan, T.F., Lysaker, M.
+(eds) Energy Minimization Methods in Computer Vision and Pattern
+Recognition. EMMCVPR 2015. Lecture Notes in Computer Science, vol 8932.
+Springer, <a href="https://dx.doi.org/10.1007/978-3-319-14612-6_15" class="external-link uri">https://dx.doi.org/10.1007/978-3-319-14612-6_15</a>
 </li>
 </ul>
 <p>The Matlab code is available to download in the Author’s website (<a href="https://math.montana.edu/dzosso/code/" class="external-link uri">https://math.montana.edu/dzosso/code/</a>).</p>
 <div class="section level2">
 <h2 id="example-use-cases">Example Use Cases<a class="anchor" aria-label="anchor" href="#example-use-cases"></a>
 </h2>
-<p>VMD has been used in many scientific areas with true or synthetic data. I’ll explain the functionality of the <em>VMDecomp</em> R package using two simple use cases.</p>
+<p>VMD has been used in many scientific areas with true or synthetic
+data. I’ll explain the functionality of the <em>VMDecomp</em> R package
+using two simple use cases.</p>
 <div class="section level3">
 <h3 id="noise-removal-1-dimensional-vmd">Noise Removal (1-Dimensional VMD)<a class="anchor" aria-label="anchor" href="#noise-removal-1-dimensional-vmd"></a>
 </h3>
-<p>In the Authors’ paper “Variational Mode Decomposition” (page 13 / 16) is mentioned, <em>“A ‘clean’ electrocardiogram (ECG) signal can be reconstructed by summing all but the first and last VMD modes, thus discarding the low-frequency baseline oscillation and most of the high-frequency noise.”</em> I’ll use the <em>‘arrhythmia’</em> data (especially the first column which corresponds to the <em>modified limb lead II (MLII)</em>) for this purpose. This same example appears also online (<a href="https://www.mathworks.com/help/wavelet/ref/vmd.html" class="external-link">Matlab Mathworks</a>).</p>
+<p>In the Authors’ paper “Variational Mode Decomposition” (page 13 / 16)
+is mentioned, <em>“A ‘clean’ electrocardiogram (ECG) signal can be
+reconstructed by summing all but the first and last VMD modes, thus
+discarding the low-frequency baseline oscillation and most of the
+high-frequency noise.”</em> I’ll use the <em>‘arrhythmia’</em> data
+(especially the first column which corresponds to the <em>modified limb
+lead II (MLII)</em>) for this purpose. This same example appears also
+online (<a href="https://www.mathworks.com/help/wavelet/ref/vmd.html" class="external-link">Matlab
+Mathworks</a>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mlampros/VMDecomp" class="external-link">VMDecomp</a></span><span class="op">)</span></span>
@@ -169,7 +187,9 @@
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="Imf_multiplot.jpeg"></p>
 <p><br></p>
-<p>The previous plot shows the intrinsic mode functions (IMF’s). Based on the Authors’ statement if we exclude the first and last Modes (IMF’s) we’ll receive a noise-free ECG,</p>
+<p>The previous plot shows the intrinsic mode functions (IMF’s). Based
+on the Authors’ statement if we exclude the first and last Modes (IMF’s)
+we’ll receive a noise-free ECG,</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">imfs_noise_free</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">arr_vmd</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">K</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
@@ -188,8 +208,23 @@
 <div class="section level3">
 <h3 id="synthetic-image-segmentation-2-dimensional-vmd">Synthetic image segmentation (2-Dimensional VMD)<a class="anchor" aria-label="anchor" href="#synthetic-image-segmentation-2-dimensional-vmd"></a>
 </h3>
-<p>To explain the functionality of the <em>“vmd()”</em> R function for 2-dimensional data I’ll load the synthetic image used in section 3.1 of the Authors’ second paper where it’s mentioned,</p>
-<p><em>“The synthetic image is a composition of spatially overlapping basic shapes, more precisely six ellipses and a rectangle, with frequency patterns varying in both periodicity and direction… The spectrum is ideal for segmentation due to modes being deliberately both well isolated and narrow-banded. The resolution of the synthetic image is 256 x 256 and the experiment was run with parameters Alpha = 1000 and K = 5. This experiment converged in 520 iterations which took 45 seconds on a standard PC. The algorithm has no problems in accuracy nor timeliness in segmenting the image into its five constituent sub-images. The first is the DC component of the image - a solid ellipse and rectangle, while the four remaining decompositions show clear separation of the patterned ellipses. Due to the solid pieces having sharp edges, their spectra are not band limited, and only smoothed versions are recovered.”</em></p>
+<p>To explain the functionality of the <em>“vmd()”</em> R function for
+2-dimensional data I’ll load the synthetic image used in section 3.1 of
+the Authors’ second paper where it’s mentioned,</p>
+<p><em>“The synthetic image is a composition of spatially overlapping
+basic shapes, more precisely six ellipses and a rectangle, with
+frequency patterns varying in both periodicity and direction… The
+spectrum is ideal for segmentation due to modes being deliberately both
+well isolated and narrow-banded. The resolution of the synthetic image
+is 256 x 256 and the experiment was run with parameters Alpha = 1000 and
+K = 5. This experiment converged in 520 iterations which took 45 seconds
+on a standard PC. The algorithm has no problems in accuracy nor
+timeliness in segmenting the image into its five constituent sub-images.
+The first is the DC component of the image - a solid ellipse and
+rectangle, while the four remaining decompositions show clear separation
+of the patterned ellipses. Due to the solid pieces having sharp edges,
+their spectra are not band limited, and only smoothed versions are
+recovered.”</em></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HenrikBengtsson/R.matlab" class="external-link">R.matlab</a></span><span class="op">)</span></span>
@@ -250,7 +285,9 @@
 <span><span class="co">#  $ u_hat: cplx [1:256, 1:256, 1:5] 7.65e-04+0.00i -6.63e-04-3.28e-04i 7.74e-04-3.15e-04i ...</span></span>
 <span><span class="co">#  $ omega: num [1:317, 1:2, 1:5] 0 0 0 0 0 0 0 0 0 0 ...</span></span></code></pre></div>
 <p><br></p>
-<p>To the output IMF’s I’ll also include the input image and then I’ll visualize all images in a multi-plot to verify that each IMF represents a different shape of the input image,</p>
+<p>To the output IMF’s I’ll also include the input image and then I’ll
+visualize all images in a multi-plot to verify that each IMF represents
+a different shape of the input image,</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">res_2d_lst</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">end_dims</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">res_2d</span><span class="op">$</span><span class="va">u</span><span class="op">[</span>,, <span class="va">x</span><span class="op">]</span><span class="op">)</span></span>
@@ -293,7 +330,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
