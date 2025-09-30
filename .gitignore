@@ -2,3 +2,4 @@ docs/
 .Rbuildignore
 .Rhistory
 inst/doc
+docs

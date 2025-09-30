@@ -29,7 +29,7 @@ VMD has been used in many scientific areas with true or synthetic data. I'll exp
 
 ### Noise Removal (1-Dimensional VMD)
 
-In the Authors' paper "Variational Mode Decomposition" (page 13 / 16) is mentioned, *"A  'clean'  electrocardiogram (ECG)  signal  can  be  reconstructed  by  summing  all but  the  first  and last  VMD  modes,  thus  discarding the low-frequency baseline oscillation and most of the high-frequency noise."* I'll use the *'arrhythmia'* data (especially the first column which corresponds to the *modified limb lead II (MLII)*) for this purpose. This same example appears also online ([Matlab Mathworks](https://www.mathworks.com/help/wavelet/ref/vmd.html)).
+In the Authors' paper "Variational Mode Decomposition" (page 13 / 16) is mentioned, *"A  'clean'  electrocardiogram (ECG)  signal  can  be  reconstructed  by  summing  all but  the  first  and last  VMD  modes,  thus  discarding the low-frequency baseline oscillation and most of the high-frequency noise."* I'll use the *'arrhythmia'* data (especially the first column which corresponds to the *modified limb lead II (MLII)*) for this purpose. This same example appears also online *Matlab Mathworks* (`https://www.mathworks.com/help/wavelet/ref/vmd.html`).
 
 ```{r}
 
