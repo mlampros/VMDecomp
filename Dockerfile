@@ -1,9 +1,8 @@
 FROM rocker/rstudio:devel
-
 LABEL maintainer='Lampros Mouselimis'
 
 RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update && \
- apt-get install -y zlib1g-dev pandoc pandoc-citeproc make libfftw3-dev libicu-dev libpng-dev && \
+ apt-get install -y zlib1g-dev pandoc make libfftw3-dev libicu-dev libpng-dev && \
  apt-get install -y sudo && \
  apt-get install -y libarmadillo-dev && \
  apt-get install -y libblas-dev && \
@@ -15,10 +14,17 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update && \
  apt-get install -y zlib1g-dev && \
  R -e "install.packages('devtools', dependencies = TRUE, repos = 'https://cloud.r-project.org/')" && \
  R -e "install.packages(c( 'Rcpp', 'RcppArmadillo', 'OpenImageR', 'R.matlab', 'glue', 'testthat', 'rmarkdown', 'knitr', 'remotes' ), repos =  'https://cloud.r-project.org/' )" && \
- R -e "remotes::install_github('mlampros/VMDecomp', upgrade = 'never', dependencies = FALSE, repos = 'https://cloud.r-project.org/')" && \
  apt-get autoremove -y && \
- apt-get clean
+ apt-get clean && \
+ rm -rf /var/lib/apt/lists/*
 
-ENV USER rstudio
+ADD http://www.random.org/strings/?num=10&len=8&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new uuid
+
+ARG BUILD_DATE
+RUN echo "$BUILD_DATE"
+
+RUN R -e "remotes::install_github('mlampros/VMDecomp', upgrade = 'never', dependencies = FALSE, repos = 'https://cloud.r-project.org/')"
+
+ENV USER=rstudio
 
 
